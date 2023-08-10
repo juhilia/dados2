@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    
+            <style>
+                
+                body {
+    font-family: Arial, sans-serif;
+    margin: 50;
+    padding: 0;
+    background-color: #e2d1f5;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #bdadd3;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    font-size: 35px;
+    margin-bottom: 29px;
+}
+
+form {
+    margin-bottom: 30px;
+}
+
+label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+}
+
+input {
+    padding: 8px;
+    margin-bottom: 10px;
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+button {
+    padding: 10px 20px;
+    background-color: #996ad6;
+    color: #cfeefd;
+    border: none;
+    border-radius: 7px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+h2 {
+    font-size: 35px;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+#dadosDoFirestore {
+    margin-top: 10px;
+}
+
+p {
+    margin: 35px 0;
+    font-size: 16px;
+}
+
+strong {
+    font-weight: bold;
+    color: #333;
+}
+
+
+            </style>
+        </head>
+        
+        <body>
+           
+
+        
+
+
+
+
+</style>
+</head>
+<body>
+    <h1>Adicionar Dados ao Firestore</h1>
+    <form id="meuFormulario">
+        <label for="nome">Nome:</label>
+        <input type="text" id="nome" name="nome" required>
+        <label for="idade">Idade:</label>
+        <input type="number" id="idade" name="idade" required>
+        <button type="submit">Salvar</button>
+    </form>
+
+    <h2>Dados do Banco de Dados</h2>
+    <div id="dadosDoFirestore"></div>
+
+    <!-- Adicione a biblioteca do Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-firestore.js"></script>
+
+    <script>
+        // Configurar as credenciais do Firebase
+        var firebaseConfig = {
+            apiKey: "AIzaSyAWRuOISBhnZo1xa5fZYQ-Ti9ELLiINhEU",
+            authDomain: "teste-suplicy-1ba59.firebaseapp.com",
+            projectId: "teste-suplicy-1ba59",
+        }
+        // Inicializar o Firebase
+        firebase.initializeApp(firebaseConfig);
+
+        // Referenciar o Firestore
+        var db = firebase.firestore();
+
+        // Capturar o formulário e salvar dados no Firestore ao enviá-lo
+        document.getElementById("meuFormulario").addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            var nome = document.getElementById("nome").value;
+            var idade = document.getElementById("idade").value;
+
+            // Salvar os dados na coleção "usuarios"
+            db.collection("usuarios").add({
+                nome: nome,
+                idade: idade
+            })
+            .then(function (docRef) {
+                console.log("Dados salvos com ID: ", docRef.id);
+                alert("Dados salvos com sucesso!");
+                // Limpar os campos do formulário após salvar os dados
+                document.getElementById("meuFormulario").reset();
+            })
+            .catch(function (error) {
+                console.error("Erro ao salvar dados: ", error);
+                alert("Ocorreu um erro ao salvar os dados. Por favor, tente novamente.");
+            });
+        });
+
+        // Mostrar os dados do Firestore
+        var dadosDiv = document.getElementById("dadosDoFirestore");
+        db.collection("usuarios").onSnapshot(function(querySnapshot) {
+            dadosDiv.innerHTML = ""; // Clear previous data
+            querySnapshot.forEach(function(doc) {
+                var data = doc.data();
+                dadosDiv.innerHTML += "<p><strong>Nome:</strong> " + data.nome + ", <strong>Idade:</strong> " + data.idade + "</p>";
+            });
+        });
+
+    </script>
+</body>
+</html>
